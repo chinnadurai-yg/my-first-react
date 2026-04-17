@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
     setLoading(true);
     // Simulate slight network delay for feel
     await new Promise((r) => setTimeout(r, 600));
-    const success = login(email, password);
+    const success = await login(email, password);
     setLoading(false);
     if (success) {
       router.push("/admin");
