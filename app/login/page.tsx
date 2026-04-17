@@ -23,7 +23,7 @@ export default function LoginPage() {
     // Simulate a small delay for better UX
     await new Promise(r => setTimeout(r, 800));
 
-    const ok = login(email, password);
+    const ok = await login(email, password);
     setLoading(false);
 
     if (ok) {
