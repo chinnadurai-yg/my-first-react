@@ -1,0 +1,38 @@
+{
+  "heroContent": {
+    "badge": "Discover a New Way of Learning 🚀",
+    "title": "Unlock Your",
+    "titleHighlight": "Creative",
+    "titleEnd": "Potential",
+    "subtitle": "Dive into an immersive learning experience. From coding to design, master new skills with interactive courses taught by global experts.",
+    "ctaPrimary": "Start Learning Today Now",
+    "ctaSecondary": "Sign Up Free"
+  },
+  "navLinks": [
+    {
+      "id": "home",
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "id": "courses",
+      "label": "Courses",
+      "href": "/courses"
+    },
+    {
+      "id": "about",
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "id": "nav-1776431845727",
+      "label": "Service",
+      "href": "/"
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ]
+}

@@ -1,40 +1,22 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { storage } from '@/lib/storage';
 
-const dataFilePath = path.join(process.cwd(), 'data', 'applications.json');
-
-// Ensure data folder exists
-if (!fs.existsSync(path.join(process.cwd(), 'data'))) {
-  fs.mkdirSync(path.join(process.cwd(), 'data'), { recursive: true });
-}
-
-function getApplications() {
-  try {
-    if (!fs.existsSync(dataFilePath)) return [];
-    return JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
-  } catch (e) {
-    return [];
-  }
-}
-
-function saveApplications(data: any[]) {
-  fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-}
+const APPS_FILE = 'applications.json';
 
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const apps = getApplications();
+    const apps = storage.read<any[]>(APPS_FILE, []);
+    
     const newApp = {
       ...data,
-      id: Date.now(), // Real numeric timestamp ID
+      id: Date.now(),
       status: "Pending",
       createdAt: new Date().toISOString(),
     };
     
     apps.push(newApp);
-    saveApplications(apps);
+    storage.write(APPS_FILE, apps);
     
     return NextResponse.json(newApp, { status: 201 });
   } catch (error: any) {
@@ -44,8 +26,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const apps = getApplications();
-    // Return sorted by newest
+    const apps = storage.read<any[]>(APPS_FILE, []);
     const sorted = [...apps].sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );

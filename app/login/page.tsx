@@ -1,6 +1,41 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthLayout from "../components/auth/AuthLayout";
+import { useAdminAuth } from "../context/AdminAuthContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAdminAuth();
+  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    // Simulate a small delay for better UX
+    await new Promise(r => setTimeout(r, 800));
+
+    const ok = login(email, password);
+    setLoading(false);
+
+    if (ok) {
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/admin");
+      }, 1500);
+    } else {
+      setError("Invalid email or password. Please try again.");
+    }
+  };
+
   return (
     <AuthLayout
       title="Welcome Back!"
@@ -10,7 +45,19 @@ export default function LoginPage() {
       footerLinkHref="/register"
       maxWidthClass="max-w-md"
     >
-      <form className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        {/* Error/Success Messages */}
+        {error && (
+          <div className="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs font-bold border border-red-100 dark:border-red-900/50 flex items-center gap-2">
+            ⚠️ {error}
+          </div>
+        )}
+        {success && (
+          <div className="p-3.5 rounded-xl bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 text-xs font-bold border border-green-100 dark:border-green-900/50 flex items-center gap-2">
+            ✅ Login successful! Redirecting to panel...
+          </div>
+        )}
+
         {/* Email Field */}
         <div>
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="email">
@@ -19,9 +66,12 @@ export default function LoginPage() {
           <input 
             id="email" 
             type="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com" 
             className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-200"
             required
+            disabled={loading || success}
           />
         </div>
 
@@ -38,18 +88,31 @@ export default function LoginPage() {
           <input 
             id="password" 
             type="password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••" 
             className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-200"
             required
+            disabled={loading || success}
           />
         </div>
 
         {/* Submit Button */}
         <button 
           type="submit"
-          className="mt-2 w-full py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 hover:-translate-y-0.5 transition-all duration-300"
+          disabled={loading || success}
+          className="mt-2 w-full py-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:transform-none flex items-center justify-center gap-2"
         >
-          Sign In
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Verifying...
+            </>
+          ) : success ? (
+            "Access Granted"
+          ) : (
+            "Sign In"
+          )}
         </button>
       </form>
 
